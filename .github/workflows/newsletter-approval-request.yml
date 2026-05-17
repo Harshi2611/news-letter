@@ -1,0 +1,22 @@
+name: Newsletter approval request
+
+on:
+  workflow_dispatch:
+  schedule:
+    # GitHub cron uses UTC. 03:30 UTC = 09:00 IST.
+    - cron: "30 3 * * *"
+
+jobs:
+  request-approval:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Send Pushcut approval notification
+        env:
+          PUSHCUT_SECRET: ${{ secrets.PUSHCUT_SECRET }}
+          PUSHCUT_NOTIFICATION: ${{ secrets.PUSHCUT_NOTIFICATION }}
+          APPROVAL_WEBHOOK_URL: ${{ secrets.APPROVAL_WEBHOOK_URL }}
+          REJECT_WEBHOOK_URL: ${{ secrets.REJECT_WEBHOOK_URL }}
+        run: node scripts/request-newsletter-approval.mjs
