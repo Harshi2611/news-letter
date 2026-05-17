@@ -1,0 +1,35 @@
+name: Send approved job alert
+
+on:
+  workflow_dispatch:
+    inputs:
+      approved_by:
+        description: Who approved the job alert send
+        required: false
+        default: Siri Shortcut
+      approval_note:
+        description: Short note for the email footer
+        required: false
+        default: Approved from iPhone
+
+jobs:
+  send-job-alert:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Send job alert email
+        env:
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          JOB_ALERT_FROM_EMAIL: ${{ secrets.JOB_ALERT_FROM_EMAIL }}
+          JOB_ALERT_TO_EMAIL: ${{ secrets.JOB_ALERT_TO_EMAIL }}
+          APPROVED_BY: ${{ inputs.approved_by }}
+          APPROVAL_NOTE: ${{ inputs.approval_note }}
+        run: node scripts/send-job-alert.mjs
