@@ -1,0 +1,26 @@
+name: Send approved newsletter
+
+on:
+  workflow_dispatch:
+    inputs:
+      approved_by:
+        description: "Who approved this newsletter"
+        required: false
+        default: "Siri Shortcut"
+      approval_note:
+        description: "Optional approval note"
+        required: false
+        default: "Approved from iPhone"
+
+jobs:
+  send-newsletter:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Send approved newsletter
+        env:
+          APPROVED_BY: ${{ inputs.approved_by }}
+          APPROVAL_NOTE: ${{ inputs.approval_note }}
+        run: node scripts/send-approved-newsletter.mjs

@@ -1,46 +1,81 @@
-# Newsletter Approval Automation
+# Newsletter Siri Approval Automation
 
-This repo starts with the first milestone:
+This repo uses GitHub Actions plus an iPhone Siri Shortcut.
 
-1. GitHub Actions runs every day at 9:00 AM IST.
-2. The workflow calls Pushcut.
-3. Pushcut sends an approval notification to your iPhone.
+1. GitHub Actions runs every day at 9:00 AM IST and prepares the newsletter draft.
+2. You say: `Hey Siri, approve newsletter`.
+3. The Siri Shortcut calls GitHub's workflow dispatch API.
+4. GitHub runs the `Send approved newsletter` workflow.
 
-## iPhone Pushcut Setup
+## GitHub Workflows
 
-1. Install Pushcut on your iPhone.
-2. Create a notification named `Newsletter Approval`.
-3. In Pushcut, copy your account webhook secret from the account/webhook area.
-4. Keep the notification name exactly the same as the GitHub secret value below.
+- `.github/workflows/newsletter-approval-request.yml`: daily 9:00 AM IST draft workflow.
+- `.github/workflows/newsletter-send-approved.yml`: Siri-triggered approval workflow.
 
-## GitHub Secrets
+## GitHub Token For Siri
 
-In your GitHub repository, go to:
+Create a fine-grained GitHub personal access token:
 
-`Settings` -> `Secrets and variables` -> `Actions` -> `New repository secret`
+1. GitHub -> `Settings` -> `Developer settings` -> `Personal access tokens` -> `Fine-grained tokens`.
+2. Create a token for this repository.
+3. Give it repository permission: `Actions: Read and write`.
+4. Copy the token.
 
-Create these secrets:
+Keep this token private. It will be stored inside your iPhone Shortcut.
 
-- `PUSHCUT_SECRET`: your Pushcut webhook secret.
-- `PUSHCUT_NOTIFICATION`: `Newsletter Approval`
+## Siri Shortcut Setup
 
-Optional for the next step:
+Create a Shortcut named:
 
-- `APPROVAL_WEBHOOK_URL`: webhook that should run when you approve.
-- `REJECT_WEBHOOK_URL`: webhook that should run when you reject.
+```text
+Approve Newsletter
+```
 
-## Manual Test
+Add a `Get Contents of URL` action:
 
-After pushing this repo to GitHub:
+- URL:
+
+```text
+https://api.github.com/repos/YOUR_USERNAME/YOUR_REPO/actions/workflows/newsletter-send-approved.yml/dispatches
+```
+
+- Method: `POST`
+- Headers:
+
+```text
+Accept: application/vnd.github+json
+Authorization: Bearer YOUR_FINE_GRAINED_GITHUB_TOKEN
+X-GitHub-Api-Version: 2022-11-28
+```
+
+- Request body type: JSON
+- JSON body:
+
+```json
+{
+  "ref": "main",
+  "inputs": {
+    "approved_by": "Siri Shortcut",
+    "approval_note": "Approved from iPhone"
+  }
+}
+```
+
+Now say:
+
+```text
+Hey Siri, approve newsletter
+```
+
+## Manual GitHub Test
 
 1. Open the `Actions` tab.
-2. Select `Newsletter approval request`.
+2. Select `Send approved newsletter`.
 3. Click `Run workflow`.
-4. Confirm the Pushcut notification arrives on your iPhone.
 
 ## Schedule
 
-The workflow uses:
+The daily draft workflow uses:
 
 ```yaml
 cron: "30 3 * * *"
