@@ -4,7 +4,8 @@ This repo uses GitHub Actions plus an iPhone Siri Shortcut.
 
 1. You say: `Hey Siri, send newsletter`.
 2. The Siri Shortcut calls GitHub's workflow dispatch API.
-3. GitHub runs the `Send approved newsletter` workflow and sends the email.
+3. GitHub fetches current technology news from RSS feeds.
+4. GitHub sends a top-10 newsletter email with Resend.
 
 ## GitHub Workflows
 
@@ -23,7 +24,7 @@ Keep this token private. It will be stored inside your iPhone Shortcut.
 
 ## Email Sending Setup
 
-This repo uses Resend to send email from GitHub Actions.
+This repo uses Resend to send email from GitHub Actions. The newsletter content is fetched from RSS feeds including TechCrunch, The Verge, Ars Technica, Wired, MIT Technology Review, BleepingComputer, and Hacker News.
 
 Create a Resend account, create an API key, then add these GitHub repository secrets:
 
