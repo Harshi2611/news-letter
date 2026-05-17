@@ -2,14 +2,12 @@
 
 This repo uses GitHub Actions plus an iPhone Siri Shortcut.
 
-1. GitHub Actions runs every day at 9:00 AM IST and prepares the newsletter draft.
-2. You say: `Hey Siri, approve newsletter`.
-3. The Siri Shortcut calls GitHub's workflow dispatch API.
-4. GitHub runs the `Send approved newsletter` workflow.
+1. You say: `Hey Siri, send newsletter`.
+2. The Siri Shortcut calls GitHub's workflow dispatch API.
+3. GitHub runs the `Send approved newsletter` workflow and sends the email.
 
 ## GitHub Workflows
 
-- `.github/workflows/newsletter-approval-request.yml`: daily 9:00 AM IST draft workflow.
 - `.github/workflows/newsletter-send-approved.yml`: Siri-triggered approval workflow.
 
 ## GitHub Token For Siri
@@ -23,12 +21,26 @@ Create a fine-grained GitHub personal access token:
 
 Keep this token private. It will be stored inside your iPhone Shortcut.
 
+## Email Sending Setup
+
+This repo uses Resend to send email from GitHub Actions.
+
+Create a Resend account, create an API key, then add these GitHub repository secrets:
+
+- `RESEND_API_KEY`: your Resend API key.
+- `NEWSLETTER_FROM_EMAIL`: sender address, for example `Newsletter <onboarding@resend.dev>` for testing or your verified domain email.
+- `NEWSLETTER_TO_EMAIL`: your email address.
+
+GitHub location:
+
+`Settings` -> `Secrets and variables` -> `Actions` -> `New repository secret`
+
 ## Siri Shortcut Setup
 
 Create a Shortcut named:
 
 ```text
-Approve Newsletter
+Send Newsletter
 ```
 
 Add a `Get Contents of URL` action:
@@ -64,7 +76,7 @@ X-GitHub-Api-Version: 2022-11-28
 Now say:
 
 ```text
-Hey Siri, approve newsletter
+Hey Siri, send newsletter
 ```
 
 ## Manual GitHub Test
@@ -72,13 +84,3 @@ Hey Siri, approve newsletter
 1. Open the `Actions` tab.
 2. Select `Send approved newsletter`.
 3. Click `Run workflow`.
-
-## Schedule
-
-The daily draft workflow uses:
-
-```yaml
-cron: "30 3 * * *"
-```
-
-GitHub schedules use UTC, so this runs at 9:00 AM in India Standard Time.

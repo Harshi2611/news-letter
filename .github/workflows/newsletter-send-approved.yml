@@ -23,4 +23,7 @@ jobs:
         env:
           APPROVED_BY: ${{ inputs.approved_by }}
           APPROVAL_NOTE: ${{ inputs.approval_note }}
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          NEWSLETTER_FROM_EMAIL: ${{ secrets.NEWSLETTER_FROM_EMAIL }}
+          NEWSLETTER_TO_EMAIL: ${{ secrets.NEWSLETTER_TO_EMAIL }}
         run: node scripts/send-approved-newsletter.mjs
